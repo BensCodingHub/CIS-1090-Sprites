@@ -36,9 +36,10 @@ function setup(sprites) {
     sprites[3].image = "☢️"; //Radiation particle 3
     sprites[3].x = 200;
     sprites[3].y = 350;
-
+//WARNING! See line 123 if these values change!
 }
-
+//velocity for the particles
+//Set to 0 for debugging / coordinate adjustment purposes
 let vx = 100;
 let vy = 100;
 /**
@@ -56,9 +57,10 @@ let vy = 100;
 function frame(sprites, t, dt, up, down, left, right, space) {
     //Keep references to the sprites in some variables with
     //better names:
-    const truck = sprites[0]; //Easier to remember
-    const house = sprites[1]; //Easier to remember
-    const fire = sprites[2]; //Easier to remember
+    const player = sprites[0]; //Easier to remember
+    const radiationOne = sprites[1]; //Easier to remember
+    const RadiationTwo = sprites[2]; //Easier to remember
+    const RadiationThree = sprites[3];
 
     //Move the fire engine
     if (up) {
@@ -69,25 +71,20 @@ function frame(sprites, t, dt, up, down, left, right, space) {
         //Multiply them together so that the
         //truck moves at the same speed if the
         //computer is fast or slow
-        truck.y += speed * dt;
+        player.y += speed * dt;
     } 
     if (down) {
-        truck.y -= speed * dt;
+        player.y -= speed * dt;
     }
     if (right) {
-        truck.x += speed * dt;
+        player.x += speed * dt;
         //You can flipH a spright so it is facing
         //the other direction
-        truck.flipH = true;
+        player.flipH = true;
     }
     if (left) {
-        truck.x -= speed * dt;
-        truck.flipH = false;
-    }
-
-    //If the truck is close to the house
-    if ( distance(truck, house) < 10 ){
-        fire.image = ""; //Make the fire go away
+        player.x -= speed * dt;
+        player.flipH = false;
     }
 
     //The radiation's code for bouncing around the frame
@@ -95,6 +92,17 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     //to prevent the sprites from escaping, if they're less than or equal to 450 (the sides of frame)
     //they'll reverse their trajectory
     //vy and vx are declared on line 39 and 40
+
+    //Radiation particle one, "☢️"
+    sprites[1].y = sprites[1].y + vy * dt
+    sprites[1].x = sprites[1].x + vx * dt
+    if (sprites[1].y >= 450 || sprites[1].y <= 0){
+        vy = -vy
+    }
+    if (sprites[1].x >= 750 || sprites[1].x <= 0){
+        vx = -vx
+    }
+    //Radiation particle two, "☣️"
     sprites[2].y = sprites[2].y + vy * dt
     sprites[2].x = sprites[2].x + vx * dt
     if (sprites[2].y >= 450 || sprites[2].y <= 0){
@@ -103,7 +111,18 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     if (sprites[2].x >= 750 || sprites[2].x <= 0){
         vx = -vx
     }
-
+    //Radiation particle three, "☢️"
+    sprites[3].y = sprites[3].y + vy * dt
+    sprites[3].x = sprites[3].x + vx * dt
+    if (sprites[3].y >= 450 || sprites[3].y <= 0){
+        vy = -vy
+    }
+    if (sprites[3].x >= 750 || sprites[3].x <= 0){
+        vx = -vx
+    }
+    //WARNING! If all of the radiation sprites are set to the same bounce-off coordinates, they will stay in a pair!
+    //Each needs a unique coordinate to correspond to the original set sprite position!
+    //end of trajectory "function"
 
     return score;
 };
@@ -111,7 +130,7 @@ function frame(sprites, t, dt, up, down, left, right, space) {
 
 export default {
     name: "Radiation Runaway",
-    instructions: "Dodge the Radiation particles!",
+    instructions: "Dodge the Radiation particles using the arrow keys!",
     icon: "☢️", //Choose an emoji icon
     background: {
         //You can put CSS here to change your background
