@@ -1,7 +1,9 @@
 //You might have some game state so you can keep track of
 //what is happening:
 let score;  //The players score
-let alive;  //is the 
+let alive;  //The player's alive state
+let dead; //The player's dead state
+let timer; //The endless counting timer score
 
 //You might have some constants that you use
 const speed = 300;  //In pixels per second
@@ -17,27 +19,28 @@ function distance(a, b) {
 //This setup function is called once when the game starts
 function setup(sprites) {
     score = 0;      //set score to zero
+    timer = 0;
     alive = true;   //Set player to alive
-
-    //Sprite "Images" are just characters,
-    //But you can use emojis!
-    // https://emojis.wiki/
-
-    sprites[0].image = "🚒"; //A fire engine
+    sprites[0].image = "🧍"; //Standing man
     sprites[0].x = 100;
     sprites[0].y = 100;
 
     //Putting two sprites together you
     //can make more complicated things.
-    sprites[1].image = "🏠"; //A fire engine
-    sprites[1].x = 300;
-    sprites[1].y = 100;
-    sprites[2].image = "🔥"; //A fire engine
-    sprites[2].x = 300;
-    sprites[2].y = 120;
+    sprites[1].image = "☢️"; //Radiation particle 1
+    sprites[1].x = 400;
+    sprites[1].y = 350;
+    sprites[2].image = "☣️"; //Radiation particle 2
+    sprites[2].x = 350;
+    sprites[2].y = 350;
+    sprites[3].image = "☢️"; //Radiation particle 3
+    sprites[3].x = 200;
+    sprites[3].y = 350;
 
 }
 
+let vx = 100;
+let vy = 100;
 /**
  * This function is called every frame
  * @param sprites   Array of sprite objects
@@ -87,16 +90,29 @@ function frame(sprites, t, dt, up, down, left, right, space) {
         fire.image = ""; //Make the fire go away
     }
 
-    //A very simple repeating animation
-    sprites[2].y += Math.sin(t)/10;
+    //The radiation's code for bouncing around the frame
+    //The sprite starts with hitting the corner, because vertical and horizontal velocity is called at the same time
+    //to prevent the sprites from escaping, if they're less than or equal to 450 (the sides of frame)
+    //they'll reverse their trajectory
+    //vy and vx are declared on line 39 and 40
+    sprites[2].y = sprites[2].y + vy * dt
+    sprites[2].x = sprites[2].x + vx * dt
+    if (sprites[2].y >= 450 || sprites[2].y <= 0){
+        vy = -vy
+    }
+    if (sprites[2].x >= 750 || sprites[2].x <= 0){
+        vx = -vx
+    }
+
 
     return score;
 };
 
+
 export default {
-    name: "Homework",
-    instructions: "Write your instructions here",
-    icon: "📝", //Choose an emoji icon
+    name: "Radiation Runaway",
+    instructions: "Dodge the Radiation particles!",
+    icon: "☢️", //Choose an emoji icon
     background: {
         //You can put CSS here to change your background
         "background-color": "#555"
