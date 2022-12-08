@@ -1,9 +1,9 @@
 //You might have some game state so you can keep track of
 //what is happening:
-let score;  //The players score
+let score;  //The players score, built-in, cannot be removed.
+let countup;
 let alive;  //The player's alive state
 let dead; //The player's dead state
-let timer; //The endless counting timer score
 
 //You might have some constants that you use
 const speed = 300;  //In pixels per second
@@ -19,7 +19,6 @@ function distance(a, b) {
 //This setup function is called once when the game starts
 function setup(sprites) {
     score = 0;      //set score to zero
-    timer = 0;
     alive = true;   //Set player to alive
     sprites[0].image = "🧍"; //Standing man
     sprites[0].x = 100;
@@ -28,20 +27,27 @@ function setup(sprites) {
     //Putting two sprites together you
     //can make more complicated things.
     sprites[1].image = "☢️"; //Radiation particle 1
-    sprites[1].x = 400;
+    sprites[1].x = 600;
     sprites[1].y = 350;
     sprites[2].image = "☣️"; //Radiation particle 2
-    sprites[2].x = 350;
-    sprites[2].y = 350;
+    sprites[2].x = 250;
+    sprites[2].y = 150;
     sprites[3].image = "☢️"; //Radiation particle 3
     sprites[3].x = 200;
     sprites[3].y = 350;
 //WARNING! See line 123 if these values change!
+//current placement coordinates, 400, 350, and 350, 350, and 200, and 350
 }
-//velocity for the particles
+//The Velocity for the particles
 //Set to 0 for debugging / coordinate adjustment purposes
+//Each particle cannot share the same vx and vy!
 let vx = 100;
 let vy = 100;
+let vx2 = 100;
+let vy2 = 100;
+let vx3 = 100;
+let vy3 = 100;
+
 /**
  * This function is called every frame
  * @param sprites   Array of sprite objects
@@ -62,7 +68,11 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     const RadiationTwo = sprites[2]; //Easier to remember
     const RadiationThree = sprites[3];
 
-    //Move the fire engine
+    score += dt;
+    if (score < 1000){
+        Math.floor(score + 1)
+    }
+    //Move the player
     if (up) {
         //Speed is in pixels per second, and
         //dt is the number of seconds that have
@@ -87,6 +97,18 @@ function frame(sprites, t, dt, up, down, left, right, space) {
         player.flipH = false;
     }
 
+    //stops the player from leaving the frame horizontally
+    if (sprites[0].x < -20)
+        sprites[0].x = -20;
+    if (sprites[0].x > 755)
+        sprites[0].x = 755;
+    //stops the player from leaving the frame vertically
+    if (sprites[0].y < -9)
+        sprites[0].y = -9;
+    if (sprites[0].y > 445)
+        sprites[0].y = 445;
+
+    
     //The radiation's code for bouncing around the frame
     //The sprite starts with hitting the corner, because vertical and horizontal velocity is called at the same time
     //to prevent the sprites from escaping, if they're less than or equal to 450 (the sides of frame)
@@ -102,29 +124,30 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     if (sprites[1].x >= 750 || sprites[1].x <= 0){
         vx = -vx
     }
+    //default for all, 450 y and 750 x
     //Radiation particle two, "☣️"
-    sprites[2].y = sprites[2].y + vy * dt
-    sprites[2].x = sprites[2].x + vx * dt
+    sprites[2].y = sprites[2].y + vy2 * dt
+    sprites[2].x = sprites[2].x + vx2 * dt
     if (sprites[2].y >= 450 || sprites[2].y <= 0){
-        vy = -vy
+        vy2 = -vy2
     }
     if (sprites[2].x >= 750 || sprites[2].x <= 0){
-        vx = -vx
+        vx2 = -vx2
     }
     //Radiation particle three, "☢️"
-    sprites[3].y = sprites[3].y + vy * dt
-    sprites[3].x = sprites[3].x + vx * dt
+    sprites[3].y = sprites[3].y + vy3 * dt
+    sprites[3].x = sprites[3].x + vx3 * dt
     if (sprites[3].y >= 450 || sprites[3].y <= 0){
-        vy = -vy
+        vy3 = -vy3
     }
     if (sprites[3].x >= 750 || sprites[3].x <= 0){
-        vx = -vx
+        vx3 = -vx3
     }
     //WARNING! If all of the radiation sprites are set to the same bounce-off coordinates, they will stay in a pair!
     //Each needs a unique coordinate to correspond to the original set sprite position!
     //end of trajectory "function"
 
-    return score;
+    return Math.floor(score)
 };
 
 
