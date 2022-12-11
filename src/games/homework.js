@@ -20,6 +20,7 @@ function distance(a, b) {
 function setup(sprites) {
     score = 0;      //set score to zero
     alive = true;   //Set player to alive
+    dead = false; //Player isn't dead by default
     sprites[0].image = "🧍"; //Standing man
     sprites[0].x = 100;
     sprites[0].y = 100;
@@ -35,18 +36,36 @@ function setup(sprites) {
     sprites[3].image = "☢️"; //Radiation particle 3
     sprites[3].x = 200;
     sprites[3].y = 350;
+    //Starting from here, these radiation particles will draw later once the score reaches 20
+    sprites[4].image = "";
+    sprites[4].x = 200;
+    sprites[4].y = 100;
+    sprites[5].image = "";
+    sprites[5].x = 500;
+    sprites[5].y = 100;
+    sprites[6].image = "";
+    sprites[6].x = 200;
+    sprites[6].y = 200;
+
 //WARNING! See line 123 if these values change!
 //current placement coordinates, 400, 350, and 350, 350, and 200, and 350
 }
 //The Velocity for the particles
 //Set to 0 for debugging / coordinate adjustment purposes
 //Each particle cannot share the same vx and vy!
-let vx = 100;
+let SpeedValues = [100, 100, 100, 100, 100, 100]
+let vx = 100; //default 100
 let vy = 100;
 let vx2 = 100;
 let vy2 = 100;
 let vx3 = 100;
 let vy3 = 100;
+let vx4 = 100;
+let vy4 = 100;
+let vx5 = 100;
+let vy5 = 100;
+let vx6 = 100;
+let vy6 = 100;
 
 /**
  * This function is called every frame
@@ -88,14 +107,23 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     }
     if (right) {
         player.x += speed * dt;
+        sprites[0].image = "🏃‍♂️";
         //You can flipH a spright so it is facing
         //the other direction
         player.flipH = true;
     }
     if (left) {
         player.x -= speed * dt;
+        sprites[0].image = "🏃‍♂️";
         player.flipH = false;
     }
+
+    if (distance(player, radiationOne) < 50) {
+        player.x = 0;
+        player.y = 0;
+        alert("Game over!")
+    }
+
 
     //stops the player from leaving the frame horizontally
     if (sprites[0].x < -20)
@@ -115,6 +143,7 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     //they'll reverse their trajectory
     //vy and vx are declared on line 39 and 40
 
+    //For the first three default starting particles
     //Radiation particle one, "☢️"
     sprites[1].y = sprites[1].y + vy * dt
     sprites[1].x = sprites[1].x + vx * dt
@@ -143,9 +172,44 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     if (sprites[3].x >= 750 || sprites[3].x <= 0){
         vx3 = -vx3
     }
+
     //WARNING! If all of the radiation sprites are set to the same bounce-off coordinates, they will stay in a pair!
     //Each needs a unique coordinate to correspond to the original set sprite position!
     //end of trajectory "function"
+
+    if (score > 20){
+        sprites[4].image = "☢️";
+        sprites[5].image = "☢️";
+        sprites[6].image = "☣️";
+    }
+
+    //Additional particle velocity starts here for increasing difficulty
+    sprites[4].y = sprites[4].y + vy4 * dt
+    sprites[4].x = sprites[4].x + vx4 * dt
+    if (sprites[4].y >= 450 || sprites[4].y <= 0){
+        vy4 = -vy4
+    }
+    if (sprites[4].x >= 750 || sprites[4].x <= 0){
+        vx4 = -vx4
+    }
+
+    sprites[5].y = sprites[5].y + vy5 * dt
+    sprites[5].x = sprites[5].x + vx5 * dt
+    if (sprites[5].y >= 450 || sprites[5].y <= 0){
+        vy5 = -vy5
+    }
+    if (sprites[5].x >= 750 || sprites[5].x <= 0){
+        vx5 = -vx5
+    }
+
+    sprites[6].y = sprites[6].y + vy6 * dt
+    sprites[6].x = sprites[6].x + vx6 * dt
+    if (sprites[6].y >= 450 || sprites[6].y <= 0){
+        vy6 = -vy6
+    }
+    if (sprites[6].x >= 750 || sprites[6].x <= 0){
+        vx6 = -vx6
+    }
 
     return Math.floor(score)
 };
