@@ -1,8 +1,6 @@
 //You might have some game state so you can keep track of
 //what is happening:
 let score;  //The players score, built-in, cannot be removed.
-let countup;
-let alive;  //The player's alive state
 let dead; //The player's dead state
 
 //You might have some constants that you use
@@ -19,14 +17,10 @@ function distance(a, b) {
 //This setup function is called once when the game starts
 function setup(sprites) {
     score = 0;      //set score to zero
-    alive = true;   //Set player to alive
-    dead = false; //Player isn't dead by default
+    dead = false; //Player is alive by default
     sprites[0].image = "🧍"; //Standing man
     sprites[0].x = 100;
     sprites[0].y = 100;
-
-    //Putting two sprites together you
-    //can make more complicated things.
     sprites[1].image = "☢️"; //Radiation particle 1
     sprites[1].x = 600;
     sprites[1].y = 350;
@@ -36,7 +30,7 @@ function setup(sprites) {
     sprites[3].image = "☢️"; //Radiation particle 3
     sprites[3].x = 200;
     sprites[3].y = 350;
-    //Starting from here, these radiation particles will draw later once the score reaches 20
+    //Starting from here, these radiation particles are stored in memory until drawn eachtime the score reaches +20
     sprites[4].image = "";
     sprites[4].x = 200;
     sprites[4].y = 100;
@@ -46,13 +40,10 @@ function setup(sprites) {
     sprites[6].image = "";
     sprites[6].x = 200;
     sprites[6].y = 200;
-
-//WARNING! See line 123 if these values change!
-//current placement coordinates, 400, 350, and 350, 350, and 200, and 350
 }
 //The Velocity for the particles
 //Set to 0 for debugging / coordinate adjustment purposes
-//Each particle cannot share the same vx and vy!
+//Each particle cannot share the same vx and vy, otherwise there will be bounce collision conflictions!
 let SpeedValues = [100, 100, 100, 100, 100, 100]
 let vx = 100; //default 100
 let vy = 100;
@@ -83,12 +74,18 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     //Keep references to the sprites in some variables with
     //better names:
     const player = sprites[0]; //Easier to remember
-    const radiationOne = sprites[1]; //Easier to remember
+    const RadiationOne = sprites[1]; //Easier to remember
     const RadiationTwo = sprites[2]; //Easier to remember
     const RadiationThree = sprites[3];
 
+    //Game killcode for the dead state
+    if (dead){
+        alert("Game over! Refresh page to start again!")
+        speed = 0;
+    }
+
     score += dt;
-    if (score < 1000){
+    if (score < 1000000){
         Math.floor(score + 1)
     }
     //Move the player
@@ -118,10 +115,17 @@ function frame(sprites, t, dt, up, down, left, right, space) {
         player.flipH = false;
     }
 
-    if (distance(player, radiationOne) < 50) {
-        player.x = 0;
-        player.y = 0;
-        alert("Game over!")
+    //Killcode lines for radiation touching player
+    if (distance(player, RadiationOne) < 50) {
+        dead = true;
+    }
+
+    if (distance(player, RadiationTwo) < 50) {
+        dead = true;
+    }
+
+    if (distance(player, RadiationThree) < 50) {
+        dead = true;
     }
 
 
@@ -138,10 +142,9 @@ function frame(sprites, t, dt, up, down, left, right, space) {
 
     
     //The radiation's code for bouncing around the frame
-    //The sprite starts with hitting the corner, because vertical and horizontal velocity is called at the same time
-    //to prevent the sprites from escaping, if they're less than or equal to 450 (the sides of frame)
-    //they'll reverse their trajectory
-    //vy and vx are declared on line 39 and 40
+    //The Radiation goes diagonally, because Vertical and Horizontal velocity is called at the same time
+    //to prevent the sprites from escaping, if they're less than or equal to 450 (the square of the frame)
+    //If walls are hit, they'll reverse their trajectory
 
     //For the first three default starting particles
     //Radiation particle one, "☢️"
@@ -172,9 +175,6 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     if (sprites[3].x >= 750 || sprites[3].x <= 0){
         vx3 = -vx3
     }
-
-    //WARNING! If all of the radiation sprites are set to the same bounce-off coordinates, they will stay in a pair!
-    //Each needs a unique coordinate to correspond to the original set sprite position!
     //end of trajectory "function"
 
     if (score > 20){
