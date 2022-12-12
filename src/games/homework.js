@@ -19,44 +19,27 @@ function setup(sprites) {
     score = 0;      //set score to zero
     dead = false; //Player is alive by default
     sprites[0].image = "🧍"; //Standing man
-    sprites[0].x = 100;
-    sprites[0].y = 100;
+    sprites[0].x = 350;
+    sprites[0].y = 230;
     sprites[1].image = "☢️"; //Radiation particle 1
-    sprites[1].x = 600;
-    sprites[1].y = 350;
+    sprites[1].x = 675;
+    sprites[1].y = 400;
     sprites[2].image = "☣️"; //Radiation particle 2
-    sprites[2].x = 250;
-    sprites[2].y = 150;
+    sprites[2].x = 675;
+    sprites[2].y = 10;
     sprites[3].image = "☢️"; //Radiation particle 3
-    sprites[3].x = 200;
-    sprites[3].y = 350;
-    //Starting from here, these radiation particles are stored in memory until drawn eachtime the score reaches +20
-    sprites[4].image = "";
-    sprites[4].x = 200;
-    sprites[4].y = 100;
-    sprites[5].image = "";
-    sprites[5].x = 500;
-    sprites[5].y = 100;
-    sprites[6].image = "";
-    sprites[6].x = 200;
-    sprites[6].y = 200;
+    sprites[3].x = 50;
+    sprites[3].y = 50;
 }
 //The Velocity for the particles
 //Set to 0 for debugging / coordinate adjustment purposes
 //Each particle cannot share the same vx and vy, otherwise there will be bounce collision conflictions!
-let SpeedValues = [100, 100, 100, 100, 100, 100]
-let vx = 100; //default 100
-let vy = 100;
-let vx2 = 100;
-let vy2 = 100;
-let vx3 = 100;
-let vy3 = 100;
-let vx4 = 100;
-let vy4 = 100;
-let vx5 = 100;
-let vy5 = 100;
-let vx6 = 100;
-let vy6 = 100;
+let vx = 250;
+let vy = 250;
+let vx2 = 250;
+let vy2 = 250;
+let vx3 = 250;
+let vy3 = 250;
 
 /**
  * This function is called every frame
@@ -73,14 +56,14 @@ let vy6 = 100;
 function frame(sprites, t, dt, up, down, left, right, space) {
     //Keep references to the sprites in some variables with
     //better names:
-    const player = sprites[0]; //Easier to remember
-    const RadiationOne = sprites[1]; //Easier to remember
-    const RadiationTwo = sprites[2]; //Easier to remember
+    const player = sprites[0]; //A nickname easier to remember 
+    const RadiationOne = sprites[1]; 
+    const RadiationTwo = sprites[2]; 
     const RadiationThree = sprites[3];
 
     //Game killcode for the dead state
     if (dead){
-        alert("Game over! Refresh page to start again!")
+        alert("Game over! Refresh page to start again")
         speed = 0;
     }
 
@@ -115,7 +98,8 @@ function frame(sprites, t, dt, up, down, left, right, space) {
         player.flipH = false;
     }
 
-    //Killcode lines for radiation touching player
+
+    //Killcode lines for the default radiation touching player
     if (distance(player, RadiationOne) < 50) {
         dead = true;
     }
@@ -127,7 +111,6 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     if (distance(player, RadiationThree) < 50) {
         dead = true;
     }
-
 
     //stops the player from leaving the frame horizontally
     if (sprites[0].x < -20)
@@ -147,6 +130,7 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     //If walls are hit, they'll reverse their trajectory
 
     //For the first three default starting particles
+    //default for all bounce positions, 450 y and 750 x
     //Radiation particle one, "☢️"
     sprites[1].y = sprites[1].y + vy * dt
     sprites[1].x = sprites[1].x + vx * dt
@@ -156,7 +140,6 @@ function frame(sprites, t, dt, up, down, left, right, space) {
     if (sprites[1].x >= 750 || sprites[1].x <= 0){
         vx = -vx
     }
-    //default for all, 450 y and 750 x
     //Radiation particle two, "☣️"
     sprites[2].y = sprites[2].y + vy2 * dt
     sprites[2].x = sprites[2].x + vx2 * dt
@@ -176,40 +159,6 @@ function frame(sprites, t, dt, up, down, left, right, space) {
         vx3 = -vx3
     }
     //end of trajectory "function"
-
-    if (score > 20){
-        sprites[4].image = "☢️";
-        sprites[5].image = "☢️";
-        sprites[6].image = "☣️";
-    }
-
-    //Additional particle velocity starts here for increasing difficulty
-    sprites[4].y = sprites[4].y + vy4 * dt
-    sprites[4].x = sprites[4].x + vx4 * dt
-    if (sprites[4].y >= 450 || sprites[4].y <= 0){
-        vy4 = -vy4
-    }
-    if (sprites[4].x >= 750 || sprites[4].x <= 0){
-        vx4 = -vx4
-    }
-
-    sprites[5].y = sprites[5].y + vy5 * dt
-    sprites[5].x = sprites[5].x + vx5 * dt
-    if (sprites[5].y >= 450 || sprites[5].y <= 0){
-        vy5 = -vy5
-    }
-    if (sprites[5].x >= 750 || sprites[5].x <= 0){
-        vx5 = -vx5
-    }
-
-    sprites[6].y = sprites[6].y + vy6 * dt
-    sprites[6].x = sprites[6].x + vx6 * dt
-    if (sprites[6].y >= 450 || sprites[6].y <= 0){
-        vy6 = -vy6
-    }
-    if (sprites[6].x >= 750 || sprites[6].x <= 0){
-        vx6 = -vx6
-    }
 
     return Math.floor(score)
 };
